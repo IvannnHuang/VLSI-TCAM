@@ -25,6 +25,8 @@ Developed as the final project for a VLSI design course at Cornell University.
 - **Priority Encoder**: Built from chained 8-to-3 encoders to compute the highest active matchline.
 - **Top-Level**: Integrated Verilog-A testbench provides write/search control and stimulus.
 
+<img src="img/flow.png" alt="TCAM Layout" width="300"/>
+
 ---
 
 ## Performance
@@ -46,6 +48,9 @@ Developed as the final project for a VLSI design course at Cornell University.
 - **Write/Precharge Units**: Optimized for cell tiling; use scaled FETs for reliable drive strength.
 - **Array**: Compact 32x32 layout with minimal wiring congestion; passes LVS and DRC.
 
+<img src="img/module.png" alt="TCAM Layout" width="800"/>
+<img src="img/array.png" alt="TCAM Layout" width="500"/>
+
 ---
 
 ## Verification
@@ -53,3 +58,4 @@ Developed as the final project for a VLSI design course at Cornell University.
 - Functional correctness of search/write validated with Verilog-A waveform simulation.
 - Power and timing measurements extracted from post-layout simulations.
 - Edge cases tested (e.g., one-bit mismatches, ternary cases).
+<img src="img/signal.png" alt="TCAM Layout" width="800"/>
