@@ -1,0 +1,21 @@
+//Revision 10
+//NOTE
+// Default template for spectre
+// Note:
+//      Please remember to replace Top Cell Library, Cell, and View
+//      fields with the actual names used by your design.
+//END_NOTE
+
+config array_tb;
+design ECE4740_Final_TCAM.array_tb:schematic;
+liblist myLib;
+
+viewlist spectre, cmos_sch, \cmos.sch , schematic, veriloga, ahdl, pspice, dspf;
+stoplist spectre;
+
+
+cell ECE4740_Final_TCAM.row binding :schematic;
+cell ECE4740_Final_TCAM.array binding :av_extracted;
+
+
+endconfig

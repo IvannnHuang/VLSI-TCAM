@@ -1,0 +1,16 @@
+#
+# Edit Lock-Stake file. CAUTION: Please do not change.
+#
+# Information about current Edit Lock Owner.
+#
+LockStakeVersion               1.1
+LoginName                      qx99
+HostName                       en-ec-rhel-ecelinux-05.coecis.cornell.edu
+ProcessIdentifier              85538
+ProcessCreationTime_UTC        1747421490
+ProcessCreationTime_Readable   Fri May 16 14:51:30 2025 EDT
+AppIdentifier                  /opt/cadence/IC231.007/tools.lnx86/dfII/bin/64bit/virtuoso
+OSType                         lnx86
+ReasonForPlacingEditLock       
+FilePathUsedToEditLock         /home/qx99/ece4740/ECE4740_Final_TCAM/array/physConfig/physExpand.cfg
+TimeEditLocked                 Fri May 16 15:04:21 2025 EDT

@@ -1,0 +1,67 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+module tcam_driver (
+    in1, in2, pre, write, WL,
+    SL1, SL2, vdd, gnd
+);
+
+  // Your input for the write value and search value
+  parameter integer write_val  = 2; // 0,1,2='X'
+  parameter integer search_val = 1; // 0,1,2='X'
+
+  // Ports and gnd/vdd
+  output in1, in2, pre, write, WL, SL1, SL2;
+  electrical in1, in2, pre, write, WL, SL1, SL2;
+   (* inh_conn_prop_name = "gnd", inh_conn_def_value = "cds_globals.\\gnd! " *) inout gnd;
+  electrical gnd;
+  (* inh_conn_prop_name = "vdd", inh_conn_def_value = "cds_globals.\\vdd! " *) inout vdd;
+  electrical vdd;
+
+  // logic levels & timing parameters (define as in lab4)
+  parameter real v_high   = 1.0;
+  parameter real v_low    = 0.0;
+  parameter real trise    = 10p;
+
+  parameter real TW         = 400p;     
+  parameter real Tpre_w     = 90p;
+  parameter real Tst_we     = 170p;
+  parameter real Te_we      = 370p;
+  parameter real Tst_WL_w   = 270p;
+  parameter real Te_WL_w    = 370p;
+
+
+  // read and write mappings
+  real w1, w2, r1, r2;
+
+  analog begin
+    // map write_val ? (in1,in2)
+    case (write_val)
+      0:  begin w1 = v_low;  w2 = v_high; end
+      1:  begin w1 = v_high; w2 = v_low;  end
+      2:  begin w1 = v_high; w2 = v_high; end
+      default: begin w1 = v_low; w2 = v_low; end
+    endcase
+
+    // map search_val ? (SL1,SL2)
+    case (search_val)
+      0:  begin r1 = v_low;   r2 = v_high;  end
+      1:  begin r1 = v_high;  r2 = v_low; end
+      2:  begin r1 = v_low;    r2 = v_low;  end
+      default: begin r1 = v_low; r2 = v_low; end
+    endcase
+
+    // drive data inputs during write window
+    V(in1) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ? w1 : v_low, 0, trise);
+    V(in2) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ? w2 : v_low, 0, trise);
+
+    // control signals for writing 
+    V(pre)   <+ transition(($abstime >= 0 && $abstime < Tpre_w) ?         v_low : v_high, 0, trise);
+    V(write) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?     v_high : v_low, 0, trise);
+    V(WL)    <+ transition(($abstime >= Tst_WL_w && $abstime < Te_WL_w) ? v_high : v_low, 0, trise);
+
+    // drive search lines during a fixed window
+    V(SL1) <+ transition(($abstime >= 1n && $abstime < 2n) ? r1 : v_low, 0, trise);
+    V(SL2) <+ transition(($abstime >= 1n && $abstime < 2n) ? r2 : v_low, 0, trise);
+  end
+endmodule

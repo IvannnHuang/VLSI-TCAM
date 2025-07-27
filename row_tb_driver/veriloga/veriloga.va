@@ -1,0 +1,370 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+module tcam_driver (in1, in2, pre, write, WL, SL1, SL2, vdd, gnd);
+
+  output [31:0] in1, in2, SL1, SL2;
+  electrical [31:0] in1, in2, SL1, SL2;
+
+  output pre, write, WL;
+  electrical pre, write, WL;
+
+  // The Input Write and Search Values
+  // TCAM encoding works as follows:
+  // 0 is always a 01 and 1 is always a 01
+  // Don't Care for writing is 11
+  // Don't Care for searching is 00
+parameter integer write_value_left   =  252645135;   // 0x0F0F0F0F
+parameter integer write_value_right  = -252645136;   // 0xF0F0F0F0
+parameter integer search_value_left  =  252645135;   // 0x0F0F0F00
+parameter integer search_value_right = -252645136;   // 0xF0F0F0FF
+
+
+
+  (* inh_conn_prop_name = "gnd", inh_conn_def_value = "cds_globals.\\gnd! " *) inout gnd;
+  electrical gnd;
+
+  (* inh_conn_prop_name = "vdd", inh_conn_def_value = "cds_globals.\\vdd! " *) inout vdd;
+  electrical vdd;
+
+  // Voltage levels and timing
+  parameter real v_high     = 1.0;
+  parameter real v_low      = 0.0;
+  parameter real trise      = 10p;
+
+  parameter real TW         = 400p;     
+  parameter real Tpre_w     = 90p;
+  parameter real Tst_we     = 170p;
+  parameter real Te_we      = 370p;
+  parameter real Tst_WL_w   = 270p;
+  parameter real Te_WL_w    = 370p;
+
+  analog begin
+    // Assign control signals
+    V(pre)   <+ transition(($abstime >= 0 && $abstime < Tpre_w) ? v_low : v_high, 0, trise);
+    V(write) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ? v_high : v_low, 0, trise);
+    V(WL)    <+ transition(($abstime >= Tst_WL_w && $abstime < Te_WL_w) ? v_high : v_low, 0, trise);
+
+    // Assign bit-wise values for in1/in2 from write_value
+  V(in1[0]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 0) & 1) == 0) ? v_low : v_high : v_low, 0, trise); 
+  V(in2[0]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 0) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[1]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 1) & 1) == 0) ? v_low : v_high : v_low, 0, trise); 
+  V(in2[1]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 1) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[2]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 2) & 1) == 0) ? v_low : v_high : v_low, 0, trise); 
+  V(in2[2]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 2) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[3]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 3) & 1) == 0) ? v_low : v_high : v_low, 0, trise); 
+  V(in2[3]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 3) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[4]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 4) & 1) == 0) ? v_low : v_high : v_low, 0, trise); 
+  V(in2[4]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 4) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[5]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 5) & 1) == 0) ? v_low : v_high : v_low, 0, trise); 
+  V(in2[5]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 5) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[6]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 6) & 1) == 0) ? v_low : v_high : v_low, 0, trise); 
+  V(in2[6]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 6) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[7]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 7) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[7]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 7) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[8]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 8) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[8]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 8) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[9]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 9) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[9]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 9) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[10]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 10) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[10]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 10) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[11]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 11) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[11]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 11) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[12]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 12) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[12]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 12) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[13]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 13) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[13]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 13) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[14]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 14) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[14]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 14) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[15]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 15) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[15]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 15) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[16]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 16) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[16]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 16) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[17]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 17) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[17]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 17) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[18]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 18) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[18]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 18) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[19]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 19) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[19]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 19) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[20]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 20) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[20]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 20) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[21]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 21) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[21]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 21) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[22]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 22) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[22]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 22) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[23]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 23) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[23]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 23) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[24]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 24) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[24]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 24) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[25]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 25) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[25]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 25) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[26]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 26) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[26]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 26) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[27]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 27) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[27]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 27) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[28]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 28) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[28]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 28) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[29]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 29) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[29]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 29) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[30]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 30) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[30]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 30) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(in1[31]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_left >> 31) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(in2[31]) <+ transition(($abstime >= Tst_we && $abstime < Te_we) ?
+    (((write_value_right >> 31) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[0]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 0) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[0]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 0) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[1]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 1) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[1]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 1) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[2]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 2) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[2]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 2) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[3]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 3) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[3]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 3) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[4]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 4) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[4]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 4) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[5]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 5) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[5]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 5) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[6]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 6) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[6]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 6) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[7]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 7) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[7]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 7) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[8]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 8) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[8]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 8) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[9]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 9) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[9]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 9) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[10]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 10) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[10]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 10) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[11]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 11) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[11]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 11) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[12]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 12) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[12]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 12) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[13]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 13) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[13]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 13) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[14]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 14) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[14]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 14) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[15]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 15) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[15]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 15) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[16]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 16) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[16]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 16) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[17]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 17) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[17]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 17) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[18]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 18) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[18]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 18) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[19]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 19) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[19]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 19) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[20]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 20) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[20]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 20) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[21]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 21) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[21]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 21) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[22]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 22) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[22]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 22) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[23]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 23) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[23]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 23) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[24]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 24) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[24]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 24) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[25]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 25) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[25]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 25) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[26]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 26) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[26]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 26) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[27]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 27) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[27]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 27) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[28]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 28) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[28]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 28) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[29]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 29) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[29]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 29) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[30]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 30) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[30]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 30) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+
+  V(SL1[31]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_left >> 31) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+  V(SL2[31]) <+ transition(($abstime >= 1n && $abstime < 2n) ?
+    (((search_value_right >> 31) & 1) == 0) ? v_low : v_high : v_low, 0, trise);
+end
+endmodule
+

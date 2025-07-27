@@ -1,0 +1,16 @@
+#
+# Edit Lock-Stake file. CAUTION: Please do not change.
+#
+# Information about current Edit Lock Owner.
+#
+LockStakeVersion               1.1
+LoginName                      qh229
+HostName                       ecelinux-14.ece.cornell.edu
+ProcessIdentifier              90415
+ProcessCreationTime_UTC        1747432936
+ProcessCreationTime_Readable   Fri May 16 18:02:16 2025 EDT
+AppIdentifier                  OA File System Design Manager
+OSType                         unix
+ReasonForPlacingEditLock       OpenAccess edit lock
+FilePathUsedToEditLock         /home/qh229/ece4740/ECE4740_Final_TCAM/row_tb/schematic/sch.oa.cdslck
+TimeEditLocked                 Fri May 16 20:41:09 2025 EDT

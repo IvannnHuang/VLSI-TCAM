@@ -1,0 +1,16 @@
+#
+# Edit Lock-Stake file. CAUTION: Please do not change.
+#
+# Information about current Edit Lock Owner.
+#
+LockStakeVersion               1.1
+LoginName                      kw633
+HostName                       ecelinux-01.ece.cornell.edu
+ProcessIdentifier              78220
+ProcessCreationTime_UTC        1746729706
+ProcessCreationTime_Readable   Thu May  8 14:41:46 2025 EDT
+AppIdentifier                  OA File System Design Manager
+OSType                         unix
+ReasonForPlacingEditLock       OpenAccess edit lock
+FilePathUsedToEditLock         /home/kw633/ece4740/ECE4740_Final_TCAM/tcam_cell_tb_driver/veriloga/netlist.oa.cdslck
+TimeEditLocked                 Thu May  8 15:17:22 2025 EDT
